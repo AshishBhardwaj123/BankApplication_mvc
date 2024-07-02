@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+    <tx:annotation-driven/>
+
+    <bean class="org.springframework.jdbc.datasource.DriverManagerDataSource" id="ds">
+        <property name="driverClassName" value="com.mysql.cj.jdbc.Driver"/>
+        <property name="url" value="jdbc:mysql://localhost:3306/spring_mvc"/>
+        <property name="username" value="root"/>
+        <property name="password" value="root"/>
+    </bean>
+
+
+    <bean class="org.springframework.orm.hibernate5.LocalSessionFactoryBean"  name="factory">
+        <property name="dataSource" ref="ds"/>
+        <property name="hibernateProperties" >
+            <props>
+                <prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>
+                <prop key="hibernate.show_sql">true</prop>
+
+                <prop key="hibernate.hbm2ddl.auto">update</prop>
+            </props>
+        </property>
+
+        <property name="annotatedClasses" >
+            <list>
+                <value>com.spring.bankapplication.entity.Account</value>
+                <value>com.spring.bankapplication.entity.Bank</value>
+                <value>com.spring.bankapplication.entity.Branch</value>
+                <value>com.spring.bankapplication.entity.Customer</value>
+                <value>com.spring.bankapplication.entity.Loan</value>
+            </list>
+        </property>
+
+    </bean>
+
+    <!--       Hibernate Template Bean          -->
+    <bean class="org.springframework.orm.hibernate5.HibernateTemplate" id="hibernateTemplate">
+        <property name="sessionFactory" ref="factory"/>
+    </bean>
+
+
+    <!--    DAO Clas Bean
+    <bean class="com.railworld.dao.UserDaoImpl" name="UserDao">
+        <property name="hibernateTemplate" ref="hibernateTemplate"/>
+    </bean> -->
+
+
+    <!-- Transaction Manager Configuration -->
+
+    <bean id="transactionManager"
+          class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+        <property name="sessionFactory" ref="factory"/>
+    </bean>
+
+
+<context:component-scan base-package="com.spring.bankapplication"></context:component-scan>
+
+      <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" name="viewResolver">
+        <property name="prefix" value="/WEB-INF/views/"></property>
+        <property name="suffix" value=".jsp"></property>
+
+    </bean>
+
+</beans>
